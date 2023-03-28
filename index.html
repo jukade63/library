@@ -11,24 +11,27 @@
     <div class="container">
       <div class="navbar">
         <h2>Digital Library</h2>
-        <div class="login">Login</div>
+        <!-- <div class="login">Login</div> -->
       </div>
       <div class="library">
         <div class="add-book">
-            <img
-              src="./images/plus-circle.svg"
-              alt=""
-              width="100px"
-              class="plus-icon"
-            />
+          <img
+            src="./images/plus-circle.svg"
+            alt=""
+            width="100px"
+            class="plus-icon"
+          />
           <section class="modal hidden">
             <form>
               <div class="book-form">
                 <h3>Add New Book</h3>
                 <input type="text" id="title" placeholder="Title" />
                 <input type="text" id="author" placeholder="Author" />
-                <input type="text" id="genre" placeholder="Genre" />
                 <input type="number" id="page" placeholder="Page" />
+                <div class="is-read">
+                  <label for="read">Read</label>
+                  <input type="checkbox" id="read" />
+                </div>
                 <button type="submit">Submit</button>
               </div>
             </form>

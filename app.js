@@ -2,14 +2,11 @@ const plusIcon = document.querySelector(".plus-icon");
 const modal = document.querySelector(".modal");
 const overlay = document.querySelector(".overlay");
 const bookForm = document.querySelector("form");
-const bookList = document.querySelector(".book-list");
-const genre = document.getElementById('genre')
-let localLibrary
+let bookList = document.querySelector(".book-list");
+const genre = document.getElementById("genre");
+const bookItems = document.querySelectorAll('input[type="checkbox"]');
 
-let myLibrary = [
-  { title: "Galileo", author: "John", page: 100, genre: "bio" },
-  { title: "Khalid ibn Walid", author: "Abu Ibrahim", page: 130, genre: "bio" },
-];
+let myLibrary = getStorage("library") || [];
 
 function openModal() {
   modal.classList.remove("hidden");
@@ -19,84 +16,70 @@ function closeModal() {
   modal.classList.add("hidden");
   overlay.classList.add("hidden");
 }
-function addNewBook(e) {
+function addBookToLibrary(e) {
   e.preventDefault();
   const title = document.getElementById("title").value;
   const author = document.getElementById("author").value;
-  const genre = document.getElementById("genre").value;
   const page = document.getElementById("page").value;
-
-  const newBook = new Book(title, author, genre, page);
-  localLibrary.push(newBook);
-  localStorage.setItem("library", JSON.stringify(localLibrary))
-  addBookToLibrary(newBook)
+  const isRead = document.querySelector('input[type="checkbox"]').checked;
+  const newBook = new Book(title, author, page, isRead);
+  newBook.updateRead
+  console.log(newBook);
+  myLibrary.push(newBook);
+  setStorage("library", myLibrary);
+  renderBookList();
   closeModal();
+  bookForm.reset()
 }
-
-// function styleBookItem(genre){
-//   if(genre.includes('history')){
-//     this.
-//   }
-// }
-
 plusIcon.addEventListener("click", openModal);
 overlay.addEventListener("click", closeModal);
-bookForm.addEventListener("submit", (e) => addNewBook(e));
+bookForm.addEventListener("submit", (e) => addBookToLibrary(e));
 
-//object constructor
-// function Book(title, author, genre, page) {
-//   this.title = title;
-//   this.author = author;
-//   this.genre = genre;
-//   this.page = page;
-// }
-
-
-//class function
 class Book {
-  constructor(title, author, genre, page) {
+  constructor(title, author, page, isRead = false) {
     this.title = title;
     this.author = author;
-    this.genre = genre;
     this.page = page;
+    this.isRead = isRead;
   }
 }
 
-function addBookToLibrary(newBook) {
-    const {title, author, genre, page} = newBook
-    const html = `<div class="book-item">
-        <h1>Title : ${title}</h1>
-        <p>Author: ${author}</p>
-        <p>Genre : ${genre}</p>
-        <p>Page : ${page}</p>
-        <div>
-          <input type="checkbox" id="read">
-          <label for="read">Read</label>
-        </div>
-    </div>`
-    bookList.innerHTML += html
+function updateRead(index) {
+  const currentBook = myLibrary[index]
+  if(!!currentBook.isRead){
+    currentBook.isRead = false
+  }else{
+    currentBook.isRead = true
+  }  
+  setStorage("library", myLibrary)
+  renderBookList();
 }
-
 
 function renderBookList() {
-  const jsonObj = localStorage.getItem("library")
-  if(jsonObj){
-    localLibrary = JSON.parse(jsonObj)
-  }else{
-    localLibrary = myLibrary
-  }
-  localLibrary.forEach((book) => {
+  bookList.innerHTML = "";
+  myLibrary.forEach((book, index) => {
     html = `<div class="book-item"><h1>Title: ${book.title}</h1>
         <p>Author: ${book.author}</p>
-        <p>Genre : ${book.genre}</p>
         <p>Page : ${book.page} pages.</p>
           <div>
-          <input type="checkbox" id="read">
-          <label for="read">Read</label>
-        </div>
+            <p onclick="updateRead(${index})" class=${book.isRead ? "read" : "not-read"}>${
+      book.isRead ? "Read" : "Not Read"}</p>
+          </div>
+          <button onclick="removeBook(${index})" class="remove">Remove</button>
       </div>
         `;
     bookList.insertAdjacentHTML("beforeend", html);
   });
+}
+function removeBook(index) {
+  myLibrary.splice(index, 1);
+  setStorage("library", myLibrary);
+  renderBookList();
+}
+function setStorage(key = "library", value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+function getStorage(key = "library") {
+  return JSON.parse(localStorage.getItem(key));
 }
 window.onload = renderBookList();

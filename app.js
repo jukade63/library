@@ -1,6 +1,6 @@
 const plusIcon = document.querySelector(".plus-icon");
 const modal = document.querySelector(".modal");
-const overlay = document.querySelector(".overlay");
+const overlay = document.querySelector(".overlay")
 const bookForm = document.querySelector("form");
 let bookList = document.querySelector(".book-list");
 const genre = document.getElementById("genre");
@@ -24,7 +24,6 @@ function addBookToLibrary(e) {
   const isRead = document.querySelector('input[type="checkbox"]').checked;
   const newBook = new Book(title, author, page, isRead);
   newBook.updateRead
-  console.log(newBook);
   myLibrary.push(newBook);
   setStorage("library", myLibrary);
   renderBookList();
@@ -43,7 +42,6 @@ class Book {
     this.isRead = isRead;
   }
 }
-
 function updateRead(index) {
   const currentBook = myLibrary[index]
   if(!!currentBook.isRead){
@@ -82,4 +80,4 @@ function setStorage(key = "library", value) {
 function getStorage(key = "library") {
   return JSON.parse(localStorage.getItem(key));
 }
-window.onload = renderBookList();
+renderBookList();
